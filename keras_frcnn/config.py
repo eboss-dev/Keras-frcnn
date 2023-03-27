@@ -10,13 +10,13 @@ class Config:
 		self.network = 'resnet50'
 
 		# epoch length
-		self.epoch_length = 600
+		self.epoch_length = 750
 
 		# early stopping patience
-		self.patience = 6
+		self.patience = 8
 
 		# setting for data augmentation
-		self.use_zoom_in = True
+		self.use_zoom_in = False
 		self.use_horizontal_flips = True
 		self.use_vertical_flips = True
 		self.rot_90 = True
