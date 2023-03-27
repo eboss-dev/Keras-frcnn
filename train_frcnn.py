@@ -114,21 +114,30 @@ with open(config_output_filename, 'wb') as config_f:
 wandb.save('config.pickle', policy="now")
 random.shuffle(imgs)
 
+train_imgs = []
+train_temp_imgs = []
+val_imgs = []
+test_imgs = []
 # extract the validation set as 30% of the training set
 num_imgs = len(imgs)
-num_val = int(num_imgs*0.3)
+num_val = int(num_imgs*0.15)
+num_test = int(num_imgs*0.15)
 rnd_ids = random.sample(range(0,num_imgs),num_val)
 
-train_imgs = []
-val_imgs = []
+# extract validation set from training set
 for i, e in enumerate(imgs):
-    (train_imgs, val_imgs)[i in rnd_ids].append(e)
+    (train_temp_imgs, val_imgs)[i in rnd_ids].append(e)
+
+rnd_ids_test = random.sample(range(0,len(train_temp_imgs)),num_test)
+for i,e in enumerate(train_temp_imgs):
+    (train_imgs,test_imgs)[i in rnd_ids_test].append(e)
 
 #train_imgs = [s for s in all_imgs if s['imageset'] == 'trainval']
 #val_imgs = [s for s in all_imgs if s['imageset'] == 'test']
 
 print(f'Num train samples {len(train_imgs)}')
 print(f'Num val samples {len(val_imgs)}')
+print(f'Num test samples {len(test_imgs)}')
 
 data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, nn.get_img_output_length, K.common.image_dim_ordering(), mode='train')
 data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, C, nn.get_img_output_length,K.common.image_dim_ordering(), mode='val')
@@ -191,9 +200,9 @@ print('Starting training')
 vis = True
 
 #saves all the validation images inside the "test" directory
-for val_sample in val_imgs:
-	image_to_save = cv2.imread(val_sample['filepath'])
-	cv2.imwrite('/content/dataset/results/{}.png'.format(os.path.basename(val_sample['filepath'])),image_to_save)
+for test_sample in test_imgs:
+	image_to_save = cv2.imread(test_sample['filepath'])
+	cv2.imwrite('/content/dataset/testset/{}.png'.format(os.path.basename(test_sample['filepath'])),image_to_save)
 
 for epoch_num in range(num_epochs):
 
