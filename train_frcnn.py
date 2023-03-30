@@ -9,6 +9,7 @@ import pickle
 import re
 import cv2
 import os
+import csv
 
 from keras import backend as K
 from keras.optimizers import Adam, SGD, RMSprop
@@ -118,10 +119,10 @@ train_imgs = []
 train_temp_imgs = []
 val_imgs = []
 test_imgs = []
-# extract the validation set as 30% of the training set
+# extract the validation set as 10% of the training set
 num_imgs = len(imgs)
-num_val = int(num_imgs*0.15)
-num_test = int(num_imgs*0.15)
+num_val = int(num_imgs*0.10)
+num_test = int(num_imgs*0.10)
 rnd_ids = random.sample(range(0,num_imgs),num_val)
 
 # extract validation set from training set
@@ -199,10 +200,21 @@ print('Starting training')
 
 vis = True
 
-#saves all the validation images inside the "test" directory
+#saves all the test images inside the "test" directory
 for test_sample in test_imgs:
 	image_to_save = cv2.imread(test_sample['filepath'])
-	cv2.imwrite('/content/dataset/testset/{}.png'.format(os.path.basename(test_sample['filepath'])),image_to_save)
+	cv2.imwrite('/content/dataset/testset/{}'.format(os.path.basename(test_sample['filepath'])),image_to_save)
+
+#save testset in a .csv file and upload on wanndb
+data=[]
+with open('test_set.csv', 'w', newline='') as writeFile:
+    writer = csv.writer(writeFile)
+    for filename in os.listdir("/content/dataset/testset"):
+        data.append(filename)
+        writer.writerow(data)
+        data=[]
+writeFile.close()
+wandb.save('test_set.csv', policy="now")
 
 for epoch_num in range(num_epochs):
 
