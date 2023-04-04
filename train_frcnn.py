@@ -121,7 +121,7 @@ val_imgs = []
 test_imgs = []
 # extract the validation set as 10% of the training set
 num_imgs = len(imgs)
-num_val = int(num_imgs*0.10)
+num_val = int(num_imgs*0.20)
 num_test = int(num_imgs*0.10)
 rnd_ids = random.sample(range(0,num_imgs),num_val)
 
@@ -205,6 +205,11 @@ for test_sample in test_imgs:
 	image_to_save = cv2.imread(test_sample['filepath'])
 	cv2.imwrite('/content/dataset/testset/{}'.format(os.path.basename(test_sample['filepath'])),image_to_save)
 
+#saves all the test images inside the "test" directory
+for val_sample in val_imgs:
+	image_to_save = cv2.imread(val_sample['filepath'])
+	cv2.imwrite('/content/dataset/valset/{}'.format(os.path.basename(test_sample['filepath'])),image_to_save)
+
 #save testset in a .csv file and upload on wanndb
 data=[]
 with open('test_set.csv', 'w', newline='') as writeFile:
@@ -215,6 +220,17 @@ with open('test_set.csv', 'w', newline='') as writeFile:
         data=[]
 writeFile.close()
 wandb.save('test_set.csv', policy="now")
+
+#save testset in a .csv file and upload on wanndb
+data=[]
+with open('val_set.csv', 'w', newline='') as writeFile:
+    writer = csv.writer(writeFile)
+    for filename in os.listdir("/content/dataset/valset"):
+        data.append(filename)
+        writer.writerow(data)
+        data=[]
+writeFile.close()
+wandb.save('val_set.csv', policy="now")
 
 for epoch_num in range(num_epochs):
 
