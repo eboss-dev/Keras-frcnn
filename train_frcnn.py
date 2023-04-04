@@ -174,8 +174,8 @@ except:
 	print('Could not load pretrained model weights. Weights can be found in the keras application folder \
 		https://github.com/fchollet/keras/tree/master/keras/applications')
 
-optimizer = Adam(lr=1e-5)
-optimizer_classifier = Adam(lr=1e-5)
+optimizer = SGD(lr=1e-4)
+optimizer_classifier = SGD(lr=1e-4)
 model_rpn.compile(optimizer=optimizer, loss=[losses.rpn_loss_cls(num_anchors), losses.rpn_loss_regr(num_anchors)])
 model_classifier.compile(optimizer=optimizer_classifier, loss=[losses.class_loss_cls, losses.class_loss_regr(len(classes_count)-1)], metrics={f'dense_class_{len(classes_count)}': 'accuracy'})
 model_all.compile(optimizer='sgd', loss='mae')
@@ -208,7 +208,7 @@ for test_sample in test_imgs:
 #saves all the test images inside the "test" directory
 for val_sample in val_imgs:
 	image_to_save = cv2.imread(val_sample['filepath'])
-	cv2.imwrite('/content/dataset/valset/{}'.format(os.path.basename(test_sample['filepath'])),image_to_save)
+	cv2.imwrite('/content/dataset/valset/{}'.format(os.path.basename(val_sample['filepath'])),image_to_save)
 
 #save testset in a .csv file and upload on wanndb
 data=[]
