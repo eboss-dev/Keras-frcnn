@@ -22,7 +22,7 @@ from keras.utils import generic_utils
 
 # data logger
 import wandb
-wandb.init(project="FasterRCNN", entity="team_ergo",name='rami_E750PA8_400')
+wandb.init(project="FasterRCNN", entity="team_ergo",name='rami_E750PA4_416')
 
 sys.setrecursionlimit(40000)
 
@@ -174,8 +174,8 @@ except:
 	print('Could not load pretrained model weights. Weights can be found in the keras application folder \
 		https://github.com/fchollet/keras/tree/master/keras/applications')
 
-optimizer = SGD(lr=1e-4)
-optimizer_classifier = SGD(lr=1e-4)
+optimizer = Adam(lr=1e-5)
+optimizer_classifier = Adam(lr=1e-5)
 model_rpn.compile(optimizer=optimizer, loss=[losses.rpn_loss_cls(num_anchors), losses.rpn_loss_regr(num_anchors)])
 model_classifier.compile(optimizer=optimizer_classifier, loss=[losses.class_loss_cls, losses.class_loss_regr(len(classes_count)-1)], metrics={f'dense_class_{len(classes_count)}': 'accuracy'})
 model_all.compile(optimizer='sgd', loss='mae')
