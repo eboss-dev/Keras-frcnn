@@ -90,9 +90,9 @@ def get_data(input_path, smth):
 					y1 = int(round(float(obj_bbox.find('ymin').text)))
 					x2 = int(round(float(obj_bbox.find('xmax').text)))
 					y2 = int(round(float(obj_bbox.find('ymax').text)))
-					difficulty = int(element_obj.find('difficult').text) == 1
+					#difficulty = int(element_obj.find('difficult').text) == 1
 					annotation_data['bboxes'].append(
-						{'class': class_name, 'x1': x1, 'x2': x2, 'y1': y1, 'y2': y2, 'difficult': difficulty})
+						{'class': class_name, 'x1': x1, 'x2': x2, 'y1': y1, 'y2': y2})#, 'difficult': difficulty})
 				all_imgs.append(annotation_data)
 
 				if visualise:
