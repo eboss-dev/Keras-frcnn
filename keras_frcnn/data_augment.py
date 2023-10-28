@@ -19,7 +19,7 @@ def augment(img_data, config, augment=True):
 
 		if config.channel_shift and np.random.randint(0, 2) == 0:
 			order = random.sample(range(3),3)
-			img = cv2.merge((img[:,:,order[0]],img[:,:,order[1]],canvas[:,:,order[2]]))
+			img = cv2.merge((img[:,:,order[0]],img[:,:,order[1]],img[:,:,order[2]]))
 			
 		if config.use_horizontal_flips and np.random.randint(0, 2) == 0:
 			img = cv2.flip(img, 1)
