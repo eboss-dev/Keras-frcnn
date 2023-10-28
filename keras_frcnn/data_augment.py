@@ -1,4 +1,5 @@
 import cv2
+import random
 import numpy as np
 import copy
 
@@ -16,16 +17,10 @@ def augment(img_data, config, augment=True):
 	if augment:
 		rows, cols = img.shape[:2]
 
-		if config.use_zoom_in:
-			scale = np.random.choice([1,1.1,1.2,1.3],1)[0]
-			img = cv2.resize(img,None,fx=scale,fy=scale)
-			img = img[:rows,:cols]
-			for bbox in img_data_aug['bboxes']:
-				bbox['x1'] = int(min(cols-1,bbox['x1']*scale))
-				bbox['x2'] = int(min(cols-1,bbox['x2']*scale))
-				bbox['y1'] = int(min(rows-1,bbox['y1']*scale))
-				bbox['y2'] = int(min(rows-1,bbox['y2']*scale))
-
+		if config.channel_shift and np.random.randint(0, 2) == 0:
+			order = random.sample(range(3),3)
+			img = cv2.merge((img[:,:,order[0]],img[:,:,order[1]],canvas[:,:,order[2]]))
+			
 		if config.use_horizontal_flips and np.random.randint(0, 2) == 0:
 			img = cv2.flip(img, 1)
 			for bbox in img_data_aug['bboxes']:
