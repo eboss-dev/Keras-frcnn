@@ -10,13 +10,13 @@ class Config:
 		self.network = 'resnet50'
 
 		# epoch length
-		self.epoch_length = 750
+		self.epoch_length = 700
 
 		# early stopping patience
-		self.patience = 8
+		self.patience = 5
 
 		# setting for data augmentation
-		self.use_zoom_in = False
+		self.channel_shift = True
 		self.use_horizontal_flips = True
 		self.use_vertical_flips = True
 		self.rot_90 = True
@@ -32,7 +32,7 @@ class Config:
 
 		# image channel-wise mean to subtract
 		self.img_channel_mean = [0,0,0]
-		self.img_scaling_factor = 1.0
+		self.img_scaling_factor = 255.0
 
 		# number of ROIs at once
 		self.num_rois = 4
