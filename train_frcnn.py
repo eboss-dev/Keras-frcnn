@@ -121,8 +121,8 @@ val_imgs = []
 test_imgs = []
 # extract the validation set as 10% of the training set
 num_imgs = len(imgs)
-num_val = int(num_imgs*0.20)
-num_test = int(num_imgs*0.10)
+num_val = int(num_imgs*0.15)
+num_test = int(num_imgs*0)
 rnd_ids = random.sample(range(0,num_imgs),num_val)
 
 # extract validation set from training set
