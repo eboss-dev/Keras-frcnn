@@ -22,12 +22,12 @@ def augment(img_data, config, augment=True):
 			img_aux = copy.deepcopy(img)
 			#img = cv2.merge((img_aux[:,:,order[0]],img_aux[:,:,order[1]],img_aux[:,:,order[2]])) # rgb channel reordering
 			
-			imghsv = cv2.cvtColor(img_aux, cv2.COLOR_BGR2HSV)
+			imghsv = cv2.cvtColor(img_aux, cv2.COLOR_BGR2HSV).astype("float32")
 			(h, s, v) = cv2.split(imghsv)
 			s = s + np.random.randint(-60,60)
 			s = np.clip(s,0,255)
 			imghsv = cv2.merge([h,s,v])
-			img = cv2.cvtColor(imghsv, cv2.COLOR_HSV2BGR)
+			img = cv2.cvtColor(imghsv.astype("uint8"), cv2.COLOR_HSV2BGR)
 			cv2.imwrite('saturated.jpg',img)
 
 		
