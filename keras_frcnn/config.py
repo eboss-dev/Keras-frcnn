@@ -13,7 +13,7 @@ class Config:
 		self.epoch_length = 700
 
 		# early stopping patience
-		self.patience = 5
+		self.patience = 8
 
 		# setting for data augmentation
 		self.channel_shift = True
@@ -28,11 +28,11 @@ class Config:
 		self.anchor_box_ratios = [[1, 1], [1./math.sqrt(2), 2./math.sqrt(2)], [2./math.sqrt(2), 1./math.sqrt(2)]]
 
 		# size to resize the smallest side of the image
-		self.im_size = 400
+		self.im_size = 416
 
 		# image channel-wise mean to subtract
 		self.img_channel_mean = [0,0,0]
-		self.img_scaling_factor = 255.0
+		self.img_scaling_factor = 1.0
 
 		# number of ROIs at once
 		self.num_rois = 4
