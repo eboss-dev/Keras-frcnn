@@ -24,7 +24,7 @@ def augment(img_data, config, augment=True):
 			
 			imghsv = cv2.cvtColor(img_aux, cv2.COLOR_BGR2HSV).astype("float32")
 			(h, s, v) = cv2.split(imghsv)
-			s = s + np.random.randint(-60,60)
+			s = s + np.random.randint(-100,100)
 			s = np.clip(s,0,255)
 			imghsv = cv2.merge([h,s,v])
 			img = cv2.cvtColor(imghsv.astype("uint8"), cv2.COLOR_HSV2BGR)
