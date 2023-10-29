@@ -18,10 +18,19 @@ def augment(img_data, config, augment=True):
 		rows, cols = img.shape[:2]
 
 		if config.channel_shift and np.random.randint(0, 2) == 0:
-			order = random.sample(range(3),3)
+			# order = random.sample(range(3),3)
 			img_aux = copy.deepcopy(img)
-			img = cv2.merge((img_aux[:,:,order[0]],img_aux[:,:,order[1]],img_aux[:,:,order[2]]))
+			#img = cv2.merge((img_aux[:,:,order[0]],img_aux[:,:,order[1]],img_aux[:,:,order[2]])) # rgb channel reordering
 			
+			imghsv = cv2.cvtColor(img_aux, cv2.COLOR_BGR2HSV)
+			(h, s, v) = cv2.split(imghsv)
+			s = s + np.random.randint(-60,60)
+			s = np.clip(s,0,255)
+			imghsv = cv2.merge([h,s,v])
+			img = cv2.cvtColor(imghsv, cv2.COLOR_HSV2BGR)
+			cv2.imwrite('saturated.jpg',img)
+
+		
 		if config.use_horizontal_flips and np.random.randint(0, 2) == 0:
 			img = cv2.flip(img, 1)
 			for bbox in img_data_aug['bboxes']:
