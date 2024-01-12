@@ -90,7 +90,7 @@ else:
 	# set the path to weights based on backend and model
 	C.base_net_weights = nn.get_weight_path()
 
-imgs, classes_count, class_mapping = get_data(options.train_path, 'trainval')
+imgs, classes_count, class_mapping = get_data(options.train_path)
 # val_imgs, _, _ = get_data(options.train_path, 'test')
 
 if 'bg' not in classes_count:
@@ -111,7 +111,7 @@ with open(config_output_filename, 'wb') as config_f:
 	pickle.dump(C,config_f)
 	print(f'Config has been written to {config_output_filename}, and can be loaded when testing to ensure correct results')
 
-wandb.save('config.pickle', policy="now")
+#wandb.save('config.pickle', policy="now")
 random.shuffle(imgs)
 
 train_imgs = []
@@ -218,7 +218,7 @@ with open('test_set.csv', 'w', newline='') as writeFile:
         writer.writerow(data)
         data=[]
 writeFile.close()
-wandb.save('test_set.csv', policy="now")
+#wandb.save('test_set.csv', policy="now")
 
 #save testset in a .csv file and upload on wanndb
 data=[]
@@ -229,7 +229,7 @@ with open('val_set.csv', 'w', newline='') as writeFile:
         writer.writerow(data)
         data=[]
 writeFile.close()
-wandb.save('val_set.csv', policy="now")
+#wandb.save('val_set.csv', policy="now")
 
 for epoch_num in range(num_epochs):
 
@@ -332,15 +332,15 @@ for epoch_num in range(num_epochs):
 			curr_loss = loss_rpn_cls + loss_rpn_regr + loss_class_cls + loss_class_regr
 
 			#datalog
-			wandb.log({'Loss RPN class':loss_rpn_cls,
-									'Loss RPN regr':loss_rpn_regr,
-									'Loss Detector class':loss_class_cls,
-									'Loss Detector regr':loss_class_regr,
-									'Classifier acc':class_acc,
-									'Total loss':curr_loss,
-									'Epoch':epoch_num},
-									commit=False,
-									step=epoch_num)
+			#wandb.log({'Loss RPN class':loss_rpn_cls,
+			#						'Loss RPN regr':loss_rpn_regr,
+			#						'Loss Detector class':loss_class_cls,
+			#						'Loss Detector regr':loss_class_regr,
+			#						'Classifier acc':class_acc,
+			#						'Total loss':curr_loss,
+			#						'Epoch':epoch_num},
+			#						commit=False,
+			#						step=epoch_num)
 
 			# iter_num = 0
 			start_time = time.time()
@@ -436,14 +436,14 @@ for epoch_num in range(num_epochs):
 				val_curr_loss = val_loss_rpn_cls + val_loss_rpn_regr + val_loss_class_cls + val_loss_class_regr
 
 				#datalog
-				wandb.log({'Val Loss RPN class':val_loss_rpn_cls,
-										'Val Loss RPN regr':val_loss_rpn_regr,
-										'Val Loss Detector class':val_loss_class_cls,
-										'Val Loss Detector regr':val_loss_class_regr,
-										'Val Classifier acc':val_class_acc,
-										'Val Total loss':val_curr_loss},
-										commit=True,
-										step=epoch_num)
+				# wandb.log({'Val Loss RPN class':val_loss_rpn_cls,
+				#						'Val Loss RPN regr':val_loss_rpn_regr,
+				#						'Val Loss Detector class':val_loss_class_cls,
+				#						'Val Loss Detector regr':val_loss_class_regr,
+				#						'Val Classifier acc':val_class_acc,
+				#						'Val Total loss':val_curr_loss},
+				#						commit=True,
+				#						step=epoch_num)
 
 				iter_num = 0
 				start_time = time.time()
@@ -458,11 +458,11 @@ for epoch_num in range(num_epochs):
 					print(f'Validation total loss decreased')
 					val_best_loss = val_curr_loss
 					model_all.save_weights(model_path_regex.group(1) + "_best" + model_path_regex.group(2))
-					wandb.save(model_path_regex.group(1) + "_best" + model_path_regex.group(2), policy="now")
+					# wandb.save(model_path_regex.group(1) + "_best" + model_path_regex.group(2), policy="now")
 					early_stop = 0
 
 				model_all.save_weights(model_path_regex.group(1) + "_" + model_path_regex.group(2))
-				wandb.save(model_path_regex.group(1) + "_" + model_path_regex.group(2), policy="now")
+				#wandb.save(model_path_regex.group(1) + "_" + model_path_regex.group(2), policy="now")
 				break
 
 	if early_stop == C.patience:
