@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 
 def get_data(input_path):
 	found_bg = False
@@ -31,8 +32,9 @@ def get_data(input_path):
 				class_mapping[class_name] = len(class_mapping)
 
 			if filename not in all_imgs:
+
+				filename = os.path.join(os.getcwd(), filename)
 				all_imgs[filename] = {}
-				
 				img = cv2.imread(filename)
 				(rows,cols) = img.shape[:2]
 				all_imgs[filename]['filepath'] = filename
