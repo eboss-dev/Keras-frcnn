@@ -18,6 +18,7 @@ from keras.models import Model
 from keras_frcnn import config, data_generators
 from keras_frcnn import losses as losses
 import keras_frcnn.roi_helpers as roi_helpers
+from tensorflow.keras.utils import Progbar
 
 # data logger
 #import wandb
@@ -139,10 +140,10 @@ print(f'Num train samples {len(train_imgs)}')
 print(f'Num val samples {len(val_imgs)}')
 print(f'Num test samples {len(test_imgs)}')
 
-data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, nn.get_img_output_length, K.common.image_dim_ordering(), mode='train')
-data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, C, nn.get_img_output_length,K.common.image_dim_ordering(), mode='val')
+data_gen_train = data_generators.get_anchor_gt(train_imgs, classes_count, C, nn.get_img_output_length, K.image_data_format(), mode='train')
+data_gen_val = data_generators.get_anchor_gt(val_imgs, classes_count, C, nn.get_img_output_length,K.image_data_format(), mode='val')
 
-if K.common.image_dim_ordering() == 'th':
+if K.image_data_format() == 'channel_first':
 	input_shape_img = (3, None, None)
 else:
 	input_shape_img = (None, None, 3)
@@ -173,8 +174,8 @@ except:
 	print('Could not load pretrained model weights. Weights can be found in the keras application folder \
 		https://github.com/fchollet/keras/tree/master/keras/applications')
 
-optimizer = Adam(lr=1e-5)
-optimizer_classifier = Adam(lr=1e-5)
+optimizer = Adam(learning_rate=1e-5)
+optimizer_classifier = Adam(learning_rate=1e-5)
 model_rpn.compile(optimizer=optimizer, loss=[losses.rpn_loss_cls(num_anchors), losses.rpn_loss_regr(num_anchors)])
 model_classifier.compile(optimizer=optimizer_classifier, loss=[losses.class_loss_cls, losses.class_loss_regr(len(classes_count)-1)], metrics={f'dense_class_{len(classes_count)}': 'accuracy'})
 model_all.compile(optimizer='sgd', loss='mae')
@@ -200,40 +201,40 @@ print('Starting training')
 vis = True
 
 #saves all the test images inside the "test" directory
-for test_sample in test_imgs:
-	image_to_save = cv2.imread(test_sample['filepath'])
-	cv2.imwrite('/content/dataset/testset/{}'.format(os.path.basename(test_sample['filepath'])),image_to_save)
+#for test_sample in test_imgs:
+#	image_to_save = cv2.imread(test_sample['filepath'])
+#	cv2.imwrite('/content/dataset/testset/{}'.format(os.path.basename(test_sample['filepath'])),image_to_save)
 
 #saves all the test images inside the "test" directory
-for val_sample in val_imgs:
-	image_to_save = cv2.imread(val_sample['filepath'])
-	cv2.imwrite('/content/dataset/valset/{}'.format(os.path.basename(val_sample['filepath'])),image_to_save)
+#for val_sample in val_imgs:
+#	image_to_save = cv2.imread(val_sample['filepath'])
+#	cv2.imwrite('/content/dataset/valset/{}'.format(os.path.basename(val_sample['filepath'])),image_to_save)
 
 #save testset in a .csv file and upload on wanndb
-data=[]
-with open('test_set.csv', 'w', newline='') as writeFile:
-    writer = csv.writer(writeFile)
-    for filename in os.listdir("/content/dataset/testset"):
-        data.append(filename)
-        writer.writerow(data)
-        data=[]
-writeFile.close()
+#data=[]
+#with open('test_set.csv', 'w', newline='') as writeFile:
+#    writer = csv.writer(writeFile)
+#    for filename in os.listdir("/content/dataset/testset"):
+#        data.append(filename)
+#        writer.writerow(data)
+#        data=[]
+#writeFile.close()
 #wandb.save('test_set.csv', policy="now")
 
 #save testset in a .csv file and upload on wanndb
-data=[]
-with open('val_set.csv', 'w', newline='') as writeFile:
-    writer = csv.writer(writeFile)
-    for filename in os.listdir("/content/dataset/valset"):
-        data.append(filename)
-        writer.writerow(data)
-        data=[]
-writeFile.close()
+#data=[]
+#with open('val_set.csv', 'w', newline='') as writeFile:
+#    writer = csv.writer(writeFile)
+#    for filename in os.listdir("/content/dataset/valset"):
+#        data.append(filename)
+#        writer.writerow(data)
+#        data=[]
+#writeFile.close()
 #wandb.save('val_set.csv', policy="now")
 
 for epoch_num in range(num_epochs):
 
-	progbar = generic_utils.Progbar(epoch_length)
+	progbar = Progbar(epoch_length)
 	print(f'Epoch {epoch_num + 1}/{num_epochs}')
 
 	while True:
@@ -436,7 +437,7 @@ for epoch_num in range(num_epochs):
 				val_curr_loss = val_loss_rpn_cls + val_loss_rpn_regr + val_loss_class_cls + val_loss_class_regr
 
 				#datalog
-				# wandb.log({'Val Loss RPN class':val_loss_rpn_cls,
+				#wandb.log({'Val Loss RPN class':val_loss_rpn_cls,
 				#						'Val Loss RPN regr':val_loss_rpn_regr,
 				#						'Val Loss Detector class':val_loss_class_cls,
 				#						'Val Loss Detector regr':val_loss_class_regr,
@@ -458,7 +459,7 @@ for epoch_num in range(num_epochs):
 					print(f'Validation total loss decreased')
 					val_best_loss = val_curr_loss
 					model_all.save_weights(model_path_regex.group(1) + "_best" + model_path_regex.group(2))
-					# wandb.save(model_path_regex.group(1) + "_best" + model_path_regex.group(2), policy="now")
+					#wandb.save(model_path_regex.group(1) + "_best" + model_path_regex.group(2), policy="now")
 					early_stop = 0
 
 				model_all.save_weights(model_path_regex.group(1) + "_" + model_path_regex.group(2))
